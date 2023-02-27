@@ -1,0 +1,16 @@
+Given two texts, determine if they state the same information or if they state contradictory information (with regards to the question).
+
+Text 1:
+```
+{{ a }}
+```
+
+Text 2:
+```
+{{ b }}
+```
+
+Does text 1 and text 2 convey the same information?
+
+Answer(Yes/No):
+```

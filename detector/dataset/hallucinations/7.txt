@@ -1,0 +1,5 @@
+What is RLFH?
+
+RLHF, or Regularized Leaderboard-Human-Following, is a method used in the chatbot system called GPT (Generative Pre-training Transformer) to improve the performance and stability of the chatbot. It involves using a combination of human-generated and machine-generated responses to guide the chatbot's responses, with the goal of creating more natural and human-like conversations.  In the context of chatgpt, RLHF works by regularly evaluating the chatbot's responses against a leaderboard of top-performing human responses. The chatbot is then trained to follow the human responses as closely as possible, while still maintaining its own unique style and personality. This helps to ensure that the chatbot's responses are more engaging and relevant to the user, while also minimizing the risk of errors or inconsistencies.
+
+// doesn't work, why?!!?!?!?!?

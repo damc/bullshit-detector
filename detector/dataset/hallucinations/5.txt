@@ -1,0 +1,1 @@
+Yoshua Bengio wrote the back-propagation paper in 1986.

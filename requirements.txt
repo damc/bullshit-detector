@@ -1,0 +1,4 @@
+flask~=2.2.2
+openai~=0.23.1
+Jinja2~=3.0.3
+setuptools~=45.2.0
