@@ -1,7 +1,7 @@
 from logging import getLogger
 from os import environ
 from time import sleep
-from typing import Dict, Any, List, Optional
+from typing import Dict, Any, List, Optional, Generator, Union
 
 from huggingface_hub import InferenceApi
 from openai import Completion, Edit, Embedding as OpenAIEmbedding, Moderation
@@ -15,7 +15,10 @@ from .templates import render_template, template_config, parameters, transformed
 # from .redis import cache
 
 
-def complete(input_name: str, **kwargs) -> str:
+def complete(
+        input_name: str,
+        **kwargs
+) -> Union[str, Generator[str, None, None]]:
     """Send a request to API to generate completion
 
     Args:
@@ -39,6 +42,9 @@ def complete(input_name: str, **kwargs) -> str:
         getLogger("models.basic").debug("Retrying due to rate limit")
         sleep(5)
         return complete(input_name, **kwargs)
+    if 'stream' in parameters_ and parameters_['stream']:
+        log_streamed_complete_response(prompt_)
+        return response
     log_complete_response(prompt_, response)
     return transformed_text(template_config_, prompt_, response)
 
@@ -71,11 +77,18 @@ def bloom_raw_complete(parameters_: Dict[str, Any]) -> Dict[str, Any]:
     return result
 
 
+def only_text_wrapper(
+        generator: Generator[Dict[str, List[Dict[str, str]]], None, None]
+) -> Generator[str, None, None]:
+    for token in generator:
+        yield token['choices'][0]['text']
+
+
 def openai_raw_complete(
         parameters_: Dict[str, Any],
         retry_if_not_stop: int = 0,
         delay: int = 0
-) -> Optional[OpenAIObject]:
+) -> Optional[Union[OpenAIObject, Generator[str, None, None]]]:
     if delay:
         sleep(delay)
     if 'provider' in parameters_:
@@ -83,6 +96,8 @@ def openai_raw_complete(
     response = None
     for i in range(retry_if_not_stop + 1):
         try:
+            if 'stream' in parameters_ and parameters_['stream']:
+                return only_text_wrapper(Completion.create(**parameters_))
             response = Completion.create(**parameters_)['choices'][0]
         except RateLimitError:
             delay = delay * 2 if delay else 5
@@ -124,11 +139,21 @@ def log_complete_response(prompt_: str, response: OpenAIObject):
     getLogger("models.basic").debug(f"Response: {response['finish_reason']}")
 
 
+def log_streamed_complete_response(prompt_: str):
+    """Log response from API
+
+    Args:
+        prompt_: prompt that has been sent
+    """
+    getLogger("models.basic").debug("Complete (streamed response)")
+    getLogger("models.basic").debug(f"Prompt: {prompt_}")
+
+
 def complete_with_suffix(
         input_name: str,
         retry_if_not_stop: int = 0,
         **kwargs
-) -> str:
+) -> Union[str, Generator[str, None, None]]:
     """Send a request to OpenAI API to generate completion with suffix
 
     The model will generate completion in place of '[insert]' from the
@@ -161,6 +186,9 @@ def complete_with_suffix(
         **kwargs
     )
     response = openai_raw_complete(parameters_, retry_if_not_stop)
+    if 'stream' in parameters_ and parameters_['stream']:
+        log_streamed_complete_response(prompt_)
+        return response
     log_complete_with_suffix_response(prompt_, suffix, response)
     return transformed_text(template_config_, prompt_, response)
 

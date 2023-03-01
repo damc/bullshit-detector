@@ -1,1 +1,3 @@
 .idea
+progress
+*__pycache__*

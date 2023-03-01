@@ -1,0 +1,7 @@
+.form-group {
+  margin: 10px 0;
+}
+
+.form-group textarea {
+  min-height: 100px;
+}

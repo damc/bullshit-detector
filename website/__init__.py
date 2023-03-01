@@ -17,10 +17,12 @@ def index():
     if request.method == 'POST':
         content = request.form['content']
         confidence_ = confidence(content)
+    long = len(content) > 200
     return render_template(
         'index.html',
         content=content,
-        confidence=confidence_
+        confidence=confidence_,
+        long=long
     )
 
 if __name__ == '__main__':
