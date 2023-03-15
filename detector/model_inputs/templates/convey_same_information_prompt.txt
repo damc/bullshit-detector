@@ -1,4 +1,4 @@
-Given two texts, determine if they state the same information or if they state contradictory information (with regards to the question).
+Given two texts, determine if they state the same information or if they state contradictory information (with regard to the question).
 
 Text 1:
 ```

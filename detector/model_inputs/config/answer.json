@@ -1,5 +1,5 @@
 {
-    "engine": "code-davinci-002",
+    "engine": "text-davinci-003",
     "temperature": 0.85,
     "max_tokens": 350,
     "strip_last_line_if_too_long": true,
