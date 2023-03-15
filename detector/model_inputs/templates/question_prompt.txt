@@ -4,8 +4,8 @@ Answer:
 {{ answer }}
 ```
 
-What question does that answer? Form a question that can be answered with the above answer (hint: the question might be contained in the above snippet).
+What close-ended question does that answer? Form a question that can be answered with the above answer (hint: the question might be contained in the above snippet).
 
-Question:
+Close-ended question:
 
 ```
