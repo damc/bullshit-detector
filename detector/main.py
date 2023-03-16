@@ -6,7 +6,7 @@ from models.config import update_config
 
 def confidence(content: str, answers: int = 3) -> float:
     question = chat_complete('question', answer=content).strip()
-    getLogger("detector.main").debug(f"Question: {question}")
+    getLogger("detector.main").info(f"Question: {question}")
     same_answers = 0
     for i in range(answers):
         answer = chat_complete('answer', question=question).strip()
@@ -19,7 +19,7 @@ def confidence(content: str, answers: int = 3) -> float:
                 "It doesn't convey the same information"
             )
     result = same_answers / answers
-    getLogger("detector.main").debug(f"Confidence: {result}")
+    getLogger("detector.main").info(f"Confidence: {result}")
     return result
 
 

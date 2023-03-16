@@ -1,4 +1,4 @@
-from logging import basicConfig, WARNING, DEBUG, getLogger
+from logging import basicConfig, WARNING, INFO, getLogger
 from sys import stdout
 
 from flask import Flask, render_template, request, jsonify
@@ -6,7 +6,7 @@ from flask import Flask, render_template, request, jsonify
 from detector.main import confidence
 
 basicConfig(level=WARNING, stream=stdout)
-getLogger("detector.main").setLevel(DEBUG)
+getLogger("detector.main").setLevel(INFO)
 
 app = Flask(__name__)
 
