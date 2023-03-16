@@ -1,15 +1,15 @@
 from logging import getLogger
 from os.path import join, dirname
 
-from models.basic import complete
+from models.basic import chat_complete
 from models.config import update_config
 
 def confidence(content: str, answers: int = 3) -> float:
-    question = complete('question', answer=content)
+    question = chat_complete('question', answer=content).strip()
     getLogger("detector.main").debug(f"Question: {question}")
     same_answers = 0
     for i in range(answers):
-        answer = complete('answer', question=question)
+        answer = chat_complete('answer', question=question).strip()
         getLogger("detector.main").debug(f"Answer: {answer}")
         if convey_same_information(content, answer):
             getLogger("detector.main").debug("It conveys the same information")
@@ -24,13 +24,10 @@ def confidence(content: str, answers: int = 3) -> float:
 
 
 def convey_same_information(a: str, b: str) -> bool:
-    answer_ = complete('convey_same_information', a=a, b=b)
+    answer_ = chat_complete('convey_same_information', a=a, b=b)
     return 'yes' in answer_.lower()
 
 
 model_inputs_path = join(dirname(__file__), 'model_inputs')
 models_config = {'inputs_path': model_inputs_path}
 update_config(models_config)
-
-# content = "Argentina has won the world cup one time"
-# print(confidence(content))

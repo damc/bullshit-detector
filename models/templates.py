@@ -1,6 +1,6 @@
 from json import loads
 from os.path import join
-from typing import Dict, Any
+from typing import Dict, Any, List
 
 from jinja2 import FileSystemLoader, Environment
 from openai.openai_object import OpenAIObject
@@ -24,6 +24,41 @@ def render_template(template_name: str, **kwargs) -> str:
     template_env = Environment(loader=template_loader)
     template = template_env.get_template(template_name + ".txt")
     return template.render(**kwargs)
+
+
+def render_chat_template(template_name: str, **kwargs) -> List[Dict[str, str]]:
+    """Render a chat template
+
+    Args:
+        template_name: template name
+        **kwargs: arguments for the template
+
+    Returns:
+        constructed messages, given the template
+    """
+    raw_messages = render_template(template_name, **kwargs)
+    split_messages = raw_messages.split('---')
+    messages = []
+    for split_message in split_messages:
+        if split_message.strip() == '':
+            continue
+        try:
+            metadata, content = split_message.split(":", 1)
+        except ValueError:
+            raise ValueError(
+                f"The chat template contains an incorrect message (without "
+                f"colon): '{split_message}'."
+            )
+        metadata = metadata.split(',')
+        role = metadata[0].strip()
+        name = metadata[1].strip() if len(metadata) > 1 else None
+        content = content.strip()
+        if name is None:
+            message = {'role': role, 'content': content}
+        else:
+            message = {'role': role, 'name': name, 'content': content}
+        messages.append(message)
+    return messages
 
 
 def template_config(name: str) -> Dict[str, Any]:
@@ -65,7 +100,8 @@ ALLOWED_PARAMETERS = (
     "logit_bias",
     "user",
     "input",
-    "instruction"
+    "instruction",
+    "messages"
 )
 
 

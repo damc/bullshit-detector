@@ -4,12 +4,13 @@ from time import sleep
 from typing import Dict, Any, List, Optional, Generator, Union
 
 from huggingface_hub import InferenceApi
-from openai import Completion, Edit, Embedding as OpenAIEmbedding, Moderation
+from openai import ChatCompletion, Completion, Edit
+from openai import Embedding as OpenAIEmbedding, Moderation
 from openai.error import RateLimitError, InvalidRequestError, APIError
 from openai.openai_object import OpenAIObject
 
 from .events import dispatch_event
-from .templates import render_template, template_config, parameters, transformed_text
+from .templates import render_template, template_config, parameters, transformed_text, render_chat_template
 
 
 # from .redis import cache
@@ -298,17 +299,17 @@ def log_embedding_response(input_: str):
     getLogger("models.basic").debug(f"Input: {input_}")
 
 
-def flagged(input_: str, **kwargs) -> bool:
+def flagged(input_: str) -> bool:
     try:
-        response = Moderation.create(input_, **kwargs)
+        response = Moderation.create(input_)
     except RateLimitError:
         getLogger("models.basic").debug("Retrying due to rate limit")
         sleep(5)
-        return flagged(input_, **kwargs)
+        return flagged(input_)
     except APIError:
         getLogger("models.basic").debug("Retrying due to api error")
         sleep(5)
-        return flagged(input_, **kwargs)
+        return flagged(input_)
     log_flagged_response(input_, response)
     return response["results"][0]["flagged"]
 
@@ -325,3 +326,82 @@ def log_flagged_response(input_: str, response: OpenAIObject):
     getLogger("models.basic").debug(
         f"Response: {response['results'][0]['flagged']}"
     )
+
+
+def chat_complete(
+        input_name: str,
+        **kwargs
+) -> Union[str, Generator[str, None, None]]:
+    """Send a request to API to generate chat completion
+
+    Args:
+        input_name: name of the prompt to use
+        **kwargs: arguments passed to the prompt template
+
+    Returns:
+        text generated in the response from OpenAI API
+    """
+    getLogger("models.basic").debug(f"Complete: {input_name}")
+    messages = render_chat_template(input_name + "_messages", **kwargs)
+    template_config_ = template_config(input_name)
+    parameters_ = parameters(template_config_, messages=messages, **kwargs)
+    try:
+        response = openai_raw_chat_complete(parameters_)
+    except RateLimitError:
+        getLogger("models.basic").debug("Retrying due to rate limit")
+        sleep(5)
+        return chat_complete(input_name, **kwargs)
+    if 'stream' in parameters_ and parameters_['stream']:
+        log_streamed_chat_complete_response()
+        return response
+    log_chat_complete_response(messages, response)
+    return response
+
+
+def openai_raw_chat_complete(
+        parameters_: Dict[str, Any],
+        retry_if_not_stop: int = 0,
+        delay: int = 0
+) -> str:
+    if delay:
+        sleep(delay)
+    response = None
+    for i in range(retry_if_not_stop + 1):
+        try:
+            # if 'stream' in parameters_ and parameters_['stream']:
+            #     return only_text_wrapper(Completion.create(**parameters_))
+            response = ChatCompletion.create(**parameters_)['choices'][0]
+        except RateLimitError:
+            delay = delay * 2 if delay else 5
+            getLogger("models.basic").info("Retrying due to rate limit")
+            getLogger("models.basic").info(f"Delay: {str(delay)}")
+            dispatch_event("rate_limit")
+            return openai_raw_chat_complete(
+                parameters_,
+                retry_if_not_stop - i,
+                delay
+            )
+        except APIError:
+            delay = delay * 2 if delay else 5
+            getLogger("models.basic").debug("Retrying due to APIError")
+            getLogger("models.basic").info(f"Delay: {str(delay)}")
+            dispatch_event("rate_limit")
+            return openai_raw_chat_complete(
+                parameters_,
+                retry_if_not_stop - i,
+                delay
+            )
+        if response['finish_reason'] == 'stop':
+            break
+        if i != retry_if_not_stop:
+            getLogger("models.basic").debug("Retrying due to finish reason")
+    return response['message']['content']
+
+
+def log_streamed_chat_complete_response():
+    getLogger("models.basic").debug("Chat complete (streamed response)")
+    
+def log_chat_complete_response(messages: List[Dict[str, str]], response: str):
+    getLogger("models.basic").debug("Chat complete")
+    getLogger("models.basic").debug(f"Messages: {messages}")
+    getLogger("models.basic").debug(f"Response: {response}")
