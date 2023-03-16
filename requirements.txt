@@ -3,3 +3,8 @@ openai~=0.23.1
 Jinja2~=3.0.3
 setuptools~=45.2.0
 gunicorn==20.1.0
+transformers
+matplotlib
+plotly
+scipy
+scikit-learn
