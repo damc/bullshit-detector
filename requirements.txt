@@ -1,5 +1,5 @@
 flask~=2.2.2
-openai~=0.23.1
+openai~=0.27.0
 Jinja2~=3.0.3
 setuptools~=45.2.0
 gunicorn==20.1.0
