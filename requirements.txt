@@ -1,4 +1,4 @@
-flask~=2.2.2
+flask~=2.1.1
 openai~=0.27.0
 Jinja2~=3.0.3
 setuptools~=45.2.0
@@ -8,3 +8,5 @@ matplotlib
 plotly
 scipy
 scikit-learn
+redis~=3.5.3
+SQLAlchemy~=1.4.29
