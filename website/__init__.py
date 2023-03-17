@@ -67,6 +67,11 @@ def message(content: str, confidence_: float) -> str:
         "\nKeep in mind that I have knowledge as of 2021, so if anything has "
         "changed after that year, my answer will not reflect that."
     )
+    result += (
+        "\nI (Bullshit Detector) haven't been empirically validated on a"
+        " large dataset, so don't rely on me when the stakes are high."
+        " I have been tested on a very small dataset (with good results)."
+    )
     return result
 
 
