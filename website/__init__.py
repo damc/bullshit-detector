@@ -5,7 +5,7 @@ import random
 
 from flask import Flask, render_template, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, Float
 
 from detector.main import confidence
 
@@ -25,7 +25,7 @@ class Content(db.Model):
 
     id = Column(Integer, primary_key=True)
     content = Column(String(255))
-    confidence = Column(Integer)
+    confidence = Column(Float)
 
     def __repr__(self):
         return (
