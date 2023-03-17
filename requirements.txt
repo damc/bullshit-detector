@@ -11,3 +11,4 @@ scikit-learn
 redis~=3.5.3
 SQLAlchemy~=1.4.29
 flask_sqlalchemy
+mysqlclient
