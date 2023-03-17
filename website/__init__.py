@@ -17,7 +17,7 @@ getLogger("detector.main").setLevel(DEBUG if DEBUG_MODE else INFO)
 app = Flask(__name__)
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_DATABASE_URI'] = environ['DATABASE_URI']
-db = SQLAlchemy(app)
+db = SQLAlchemy(app, engine_options={'pool_pre_ping': True})
 
 
 class Content(db.Model):
