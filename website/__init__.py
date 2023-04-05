@@ -50,8 +50,7 @@ def detect():
     content = request.form['content']
     confidence_ = confidence(content)
     message_ = message(content, confidence_)
-    if random.random() < 0.1:
-        save_to_database(content, confidence_)
+    save_to_database(content, confidence_)
     return jsonify({'message': message_})
 
 
