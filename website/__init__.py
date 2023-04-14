@@ -67,6 +67,10 @@ def message(content: str, confidence_: float) -> str:
         "changed after that year, my answer will not reflect that."
     )
     result += (
+        "\nBe aware that I'm not good at judging opinions. I'm good at judging"
+        " facts where there is only one correct answer."
+    )
+    result += (
         "\nI (Bullshit Detector) haven't been empirically validated on a"
         " large dataset, so don't rely on me when the stakes are high."
         " I have been tested on a very small dataset (with good results)."
