@@ -4,6 +4,7 @@ from os.path import join, dirname
 from models.basic import chat_complete
 from models.config import update_config
 
+
 def confidence(content: str, answers: int = 3) -> float:
     question = chat_complete('question', answer=content).strip()
     getLogger("detector.main").info(f"Question: {question}")
