@@ -55,27 +55,28 @@ def detect():
 
 
 def message(content: str, confidence_: float) -> str:
-    result = evaluation_message(confidence_)
-    if len(content) > 200:
-        result += (
-            "\nHowever, this content is long. For best results, keep it "
-            "short and make it contain only the information that you want to "
-            "verify."
-        )
-    result += (
-        "\nKeep in mind that I have knowledge as of 2021, so if anything has "
-        "changed after that year, my answer will not reflect that."
-    )
-    result += (
-        "\nBe aware that I'm not good at judging opinions. I'm good at judging"
-        " facts where there is only one correct answer."
-    )
-    result += (
-        "\nI (Bullshit Detector) haven't been empirically validated on a"
-        " large dataset, so don't rely on me when the stakes are high."
-        " I have been tested on a very small dataset (with good results)."
-    )
-    return result
+    return "Bullshit Detector has been turned off (see the message above)."
+    # result = evaluation_message(confidence_)
+    # if len(content) > 200:
+    #     result += (
+    #         "\nHowever, this content is long. For best results, keep it "
+    #         "short and make it contain only the information that you want to "
+    #         "verify."
+    #     )
+    # result += (
+    #     "\nKeep in mind that I have knowledge as of 2021, so if anything has "
+    #     "changed after that year, my answer will not reflect that."
+    # )
+    # result += (
+    #     "\nBe aware that I'm not good at judging opinions. I'm good at judging"
+    #     " facts where there is only one correct answer."
+    # )
+    # result += (
+    #     "\nI (Bullshit Detector) haven't been empirically validated on a"
+    #     " large dataset, so don't rely on me when the stakes are high."
+    #     " I have been tested on a very small dataset (with good results)."
+    # )
+    # return result
 
 
 def evaluation_message(confidence_: float) -> str:
