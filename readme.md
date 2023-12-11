@@ -14,4 +14,4 @@ The config of the prompts is contained by `detector/model_inputs/config` folder.
 
 It programmatically reverses the content to a question and then generates few answers to the question with a high softmax temperature. If the answers convey the same message as the content, the content is likely to be true because that means that the model has high confidence that this is the truth. If the model is not confident about the answer, it will generate a different answer every time.
 
-I think there's also another, cheaper way to do this.
+I think there's also another, cheaper way to do this that I've described somewhere else.
