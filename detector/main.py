@@ -6,25 +6,18 @@ from models.config import update_config
 
 
 def confidence(content: str, answers: int = 3) -> float:
+    """Confidence that the `content` is not a hallucination"""
     question = chat_complete('question', answer=content).strip()
-    getLogger("detector.main").info(f"Question: {question}")
     same_answers = 0
     for i in range(answers):
         answer = chat_complete('answer', question=question).strip()
-        getLogger("detector.main").debug(f"Answer: {answer}")
         if convey_same_information(content, answer):
-            getLogger("detector.main").debug("It conveys the same information")
             same_answers += 1
-        else:
-            getLogger("detector.main").debug(
-                "It doesn't convey the same information"
-            )
-    result = same_answers / answers
-    getLogger("detector.main").info(f"Confidence: {result}")
-    return result
+    return same_answers / answers
 
 
 def convey_same_information(a: str, b: str) -> bool:
+    """Does `a` and `b` mean the same but with different words"""
     answer_ = chat_complete('convey_same_information', a=a, b=b)
     return 'yes' in answer_.lower()
 

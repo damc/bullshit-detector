@@ -50,7 +50,7 @@ def detect():
     content = request.form['content']
     confidence_ = confidence(content)
     message_ = message(content, confidence_)
-    save_to_database(content, confidence_)
+    # save_to_database(content, confidence_)
     return jsonify({'message': message_})
 
 
@@ -101,9 +101,9 @@ def create_tables():
         db.create_all()
 
 
-@app.before_first_request
-def init_app():
-    create_tables()
+# @app.before_first_request
+# def init_app():
+#     create_tables()
 
 if __name__ == '__main__':
     create_tables()
